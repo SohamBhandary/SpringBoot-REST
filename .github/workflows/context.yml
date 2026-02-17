@@ -1,0 +1,63 @@
+name: Context Demo Workflow
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+env:
+  GLOBAL_ENV: "I am a global env variable"
+
+jobs:
+  context-demo-job:
+    name: Show GitHub Contexts
+    runs-on: ubuntu-latest
+
+    env:
+      JOB_ENV: "I am a job-level env variable"
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Show github context
+        run: |
+          echo "Repository: ${{ github.repository }}"
+          echo "Actor: ${{ github.actor }}"
+          echo "Event name: ${{ github.event_name }}"
+          echo "Ref: ${{ github.ref }}"
+          echo "SHA: ${{ github.sha }}"
+
+      - name: Show env context
+        run: |
+          echo "Global env: $GLOBAL_ENV"
+          echo "Job env: $JOB_ENV"
+          echo "Step env: $STEP_ENV"
+        env:
+          STEP_ENV: "I am a step-level env variable"
+
+      - name: Show runner context
+        run: |
+          echo "Runner OS: ${{ runner.os }}"
+          echo "Runner Arch: ${{ runner.arch }}"
+          echo "Runner Name: ${{ runner.name }}"
+
+      - name: Show job context
+        run: |
+          echo "Job status: ${{ job.status }}"
+
+      - name: Show steps context
+        id: example_step
+        run: |
+          echo "step_output=Hello from steps context" >> $GITHUB_OUTPUT
+
+      - name: Use steps output
+        run: |
+          echo "Output from previous step: ${{ steps.example_step.outputs.step_output }}"
+
+      - name: Show secrets context (safe demo)
+        run: |
+          echo "Secret length: ${#MY_SECRET}"
+        env:
+          MY_SECRET: ${{ secrets.MY_SECRET }}
