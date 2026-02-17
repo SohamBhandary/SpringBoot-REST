@@ -11,3 +11,9 @@ jobs:
 
             -name: Say Hello
             run:  echo "Hello from second" 
+
+            -name: Install
+            env:
+               APP_ENV: demo
+            run: echo "Enviroment $APP_ENV"
+               
